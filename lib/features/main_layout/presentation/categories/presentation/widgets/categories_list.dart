@@ -1,0 +1,73 @@
+import 'package:ecommerce_app/core/resources/color_manager.dart';
+import 'package:ecommerce_app/core/resources/values_manager.dart';
+import 'package:ecommerce_app/core/routes_manager/route_generator.dart';
+import 'package:ecommerce_app/features/main_layout/presentation/manager/main_layout_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'category_item.dart';
+
+class CategoriesList extends StatefulWidget {
+  const CategoriesList({super.key});
+
+  @override
+  State<CategoriesList> createState() => _CategoriesListState();
+}
+
+class _CategoriesListState extends State<CategoriesList> {
+  // Index of the currently selected category
+  int selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Container(
+      decoration: BoxDecoration(
+        color: ColorManager.containerGray,
+        border: Border(
+            // set the border for only 3 sides
+            top: BorderSide(
+                width: AppSize.s2,
+                color: ColorManager.primary.withOpacity(0.3)),
+            left: BorderSide(
+                width: AppSize.s2,
+                color: ColorManager.primary.withOpacity(0.3)),
+            bottom: BorderSide(
+                width: AppSize.s2,
+                color: ColorManager.primary.withOpacity(0.3))),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppSize.s12),
+          bottomLeft: Radius.circular(AppSize.s12),
+        ),
+      ),
+
+      // the categories items list
+      child: ClipRRect(
+        // clip the corners of the container that hold the list view
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppSize.s12),
+          bottomLeft: Radius.circular(AppSize.s12),
+        ),
+        child: ListView.builder(
+          physics: const ClampingScrollPhysics(),
+          itemCount: context.read<MainLayoutCubit>().categoriesList.length,
+          itemBuilder: (context, index) => CategoryItem(index,
+              context.read<MainLayoutCubit>().categoriesList[index].categoryName, selectedIndex == index, onItemClick),
+        ),
+      ),
+    ));
+  }
+
+  // callback function to change the selected index
+  onItemClick(int index) {
+    context.read<MainLayoutCubit>().changeSelectedCategory(index);
+    setState(() {
+      selectedIndex = index;
+
+      // // categoriesList !!
+      // context.read<MainLayoutCubit>().getSubCategoriesList(categoryID:
+      //     context.read<MainLayoutCubit>().categoriesList[index].categoryID
+      // );
+    });
+  }
+}
